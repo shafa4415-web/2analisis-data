@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Latihan Soal Matematika</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+    
+    .slide-in {
+      animation: slideIn 0.5s ease-out forwards;
+    }
+    
+    .pulse-animation {
+      animation: pulse 2s infinite;
+    }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 50%, #1e3a5f 100%);
+    }
+    
+    .card-shadow {
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .input-focus:focus {
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+    }
+    
+    .timer-warning {
+      animation: pulse 1s infinite;
+      color: #ef4444 !important;
+    }
+    
+    .question-card {
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full bg-slate-100">
+  <div id="app" class="h-full w-full overflow-auto"><!-- Login Screen -->
+   <div id="login-screen" class="h-full w-full flex items-center justify-center p-4 gradient-bg">
+    <div class="w-full max-w-md bg-white rounded-2xl card-shadow p-8 fade-in">
+     <div class="text-center mb-8">
+      <div class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+       <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+       </svg>
+      </div>
+      <h1 class="text-2xl font-bold text-slate-800 mb-2">Latihan Soal Matematika</h1>
+      <p class="text-slate-500 text-sm">Silakan login untuk memulai ujian</p>
+     </div>
+     <div class="space-y-5">
+      <div><label class="block text-sm font-medium text-slate-700 mb-2">Nama Siswa</label> <input type="text" id="username" placeholder="Masukkan nama lengkap" class="w-full px-4 py-3 border border-slate-300 rounded-xl input-focus focus:outline-none focus:border-blue-500 transition-all">
+      </div>
+      <div><label class="block text-sm font-medium text-slate-700 mb-2">Password</label> <input type="password" id="password" placeholder="Masukkan password" class="w-full px-4 py-3 border border-slate-300 rounded-xl input-focus focus:outline-none focus:border-blue-500 transition-all">
+      </div>
+      <div id="login-error" class="hidden text-red-500 text-sm text-center bg-red-50 p-3 rounded-lg"></div><button id="login-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98]"> Login </button>
+     </div>
+     <p class="text-center text-slate-400 text-xs mt-6">Password default: 1234</p>
+    </div>
+   </div><!-- Instructions Screen -->
+   <div id="instructions-screen" class="hidden h-full w-full overflow-auto gradient-bg">
+    <div class="min-h-full flex items-center justify-center p-4 py-8">
+     <div class="w-full max-w-2xl bg-white rounded-2xl card-shadow p-8 fade-in">
+      <div class="text-center mb-6">
+       <div class="w-16 h-16 bg-amber-500 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+       </div>
+       <h2 class="text-2xl font-bold text-slate-800 mb-2">Petunjuk Ujian</h2>
+       <p class="text-slate-500">Selamat datang, <span id="student-name-display" class="font-semibold text-blue-600"></span></p>
+      </div>
+      <div class="bg-slate-50 rounded-xl p-6 mb-6">
+       <ul class="space-y-4 text-slate-700">
+        <li class="flex items-start gap-3"><span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">1</span> <span id="instruction-text-display">Ujian terdiri dari 5 soal esai kontekstual tentang asosiasi variabel kategorikal dan numerik.</span></li>
+        <li class="flex items-start gap-3"><span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">2</span> <span>Waktu pengerjaan adalah <strong>30 menit</strong>. Timer akan berjalan otomatis.</span></li>
+        <li class="flex items-start gap-3"><span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">3</span> <span>Urutan soal akan diacak untuk setiap siswa.</span></li>
+        <li class="flex items-start gap-3"><span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">4</span> <span>Jawab setiap soal dengan lengkap dan jelas.</span></li>
+        <li class="flex items-start gap-3"><span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">5</span> <span>Gunakan tombol "Sebelumnya" dan "Selanjutnya" untuk navigasi.</span></li>
+        <li class="flex items-start gap-3"><span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">6</span> <span>Klik "Selesaikan Ujian" setelah menjawab semua soal.</span></li>
+       </ul>
+      </div><button id="start-exam-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] pulse-animation"> Mulai Ujian </button>
+     </div>
+    </div>
+   </div><!-- Exam Screen -->
+   <div id="exam-screen" class="hidden h-full w-full flex flex-col bg-slate-100"><!-- Header -->
+    <header class="gradient-bg text-white p-4 shadow-lg">
+     <div class="max-w-4xl mx-auto">
+      <h1 id="exam-header" class="text-base md:text-lg font-bold text-center fade-in leading-relaxed">Latihan Soal Matematika<br><span class="text-sm md:text-base font-medium opacity-90">Materi: Menjelaskan Asosiasi antara Dua Variabel Kategorikal dan antara Dua Variabel Numerik</span></h1>
+     </div>
+    </header><!-- Timer -->
+    <div class="bg-white border-b border-slate-200 px-4 py-3">
+     <div class="max-w-4xl mx-auto flex justify-between items-center"><span class="text-slate-600 text-sm">Siswa: <span id="exam-student-name" class="font-semibold text-slate-800"></span></span>
+      <div id="timer" class="flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-full">
+       <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+       </svg><span id="timer-display" class="font-mono font-bold text-slate-800">30:00</span>
+      </div>
+     </div>
+    </div><!-- Question Area -->
+    <div class="flex-1 overflow-auto p-4">
+     <div class="max-w-4xl mx-auto">
+      <div id="question-container" class="question-card rounded-2xl card-shadow p-6 md:p-8 slide-in">
+       <div class="flex items-center justify-between mb-6"><span id="question-number" class="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold">Soal 1 dari 5</span> <span id="question-points" class="text-slate-500 text-sm">Poin: 20</span>
+       </div>
+       <div id="question-text" class="text-slate-800 text-lg leading-relaxed mb-6"></div>
+       <div><label class="block text-sm font-medium text-slate-700 mb-2">Jawaban Anda:</label> <textarea id="answer-input" rows="6" placeholder="Tuliskan jawaban Anda di sini dengan lengkap dan jelas..." class="w-full px-4 py-3 border border-slate-300 rounded-xl input-focus focus:outline-none focus:border-blue-500 transition-all resize-none"></textarea>
+       </div>
+      </div>
+     </div>
+    </div><!-- Navigation -->
+    <div class="bg-white border-t border-slate-200 p-4">
+     <div class="max-w-4xl mx-auto flex justify-between items-center gap-4"><button id="prev-btn" class="flex-1 md:flex-none bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-3 px-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"> ← Sebelumnya </button>
+      <div id="question-dots" class="hidden md:flex gap-2"></div><button id="next-btn" class="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-all"> Selanjutnya → </button> <button id="finish-btn" class="hidden flex-1 md:flex-none bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl transition-all"> Selesaikan Ujian </button>
+     </div>
+    </div>
+   </div><!-- Confirm Submit Modal -->
+   <div id="confirm-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl card-shadow p-6 max-w-md w-full fade-in">
+     <div class="text-center mb-6">
+      <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+       <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+       </svg>
+      </div>
+      <h3 class="text-xl font-bold text-slate-800 mb-2">Konfirmasi Pengumpulan</h3>
+      <p class="text-slate-600">Apakah Anda yakin ingin mengakhiri ujian dan mengumpulkan jawaban?</p>
+      <p id="unanswered-warning" class="hidden text-red-500 text-sm mt-2"></p>
+     </div>
+     <div class="flex gap-3"><button id="cancel-submit" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-3 px-6 rounded-xl transition-all"> Batal </button> <button id="confirm-submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl transition-all"> Ya, Kumpulkan </button>
+     </div>
+    </div>
+   </div><!-- Result Screen -->
+   <div id="result-screen" class="hidden h-full w-full overflow-auto gradient-bg">
+    <div class="min-h-full flex items-center justify-center p-4 py-8">
+     <div class="w-full max-w-2xl bg-white rounded-2xl card-shadow p-8 fade-in">
+      <div class="text-center mb-8">
+       <div id="result-icon" class="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4"></div>
+       <h2 class="text-2xl font-bold text-slate-800 mb-2">Ujian Selesai!</h2>
+       <p class="text-slate-500">Terima kasih, <span id="result-student-name" class="font-semibold text-blue-600"></span></p>
+      </div>
+      <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 mb-6">
+       <div class="text-center">
+        <p class="text-slate-600 mb-2">Nilai Anda</p>
+        <p id="final-score" class="text-6xl font-bold text-blue-600 mb-2">0</p>
+        <p class="text-slate-500">dari 100</p>
+       </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4 mb-6">
+       <div class="bg-slate-50 rounded-xl p-4 text-center">
+        <p class="text-slate-500 text-sm">Soal Terjawab</p>
+        <p id="answered-count" class="text-2xl font-bold text-slate-800">0/5</p>
+       </div>
+       <div class="bg-slate-50 rounded-xl p-4 text-center">
+        <p class="text-slate-500 text-sm">Waktu Pengerjaan</p>
+        <p id="time-spent" class="text-2xl font-bold text-slate-800">00:00</p>
+       </div>
+      </div>
+      <div id="save-status" class="text-center text-sm text-slate-500 mb-4"><span class="inline-flex items-center gap-2">
+        <svg class="w-4 h-4 animate-spin" fill="none" viewbox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle> <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+        </svg> Menyimpan hasil... </span>
+      </div><button id="retry-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98]"> Kembali ke Login </button>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    // Questions Bank
+    const questionsBank = [
+      {
+        id: 1,
+        text: `<strong>Soal 1: Tabel Kontingensi</strong><br><br>
+        Sebuah sekolah melakukan survei tentang hubungan antara jenis kelamin siswa dengan minat ekstrakurikuler. Data yang diperoleh adalah sebagai berikut:<br><br>
+        • Laki-laki yang memilih Olahraga: 45 siswa<br>
+        • Laki-laki yang memilih Seni: 25 siswa<br>
+        • Perempuan yang memilih Olahraga: 30 siswa<br>
+        • Perempuan yang memilih Seni: 50 siswa<br><br>
+        <strong>Pertanyaan:</strong><br>
+        a) Buatlah tabel kontingensi dari data di atas!<br>
+        b) Hitunglah persentase siswa laki-laki yang memilih olahraga dari total siswa laki-laki!<br>
+        c) Jelaskan apakah terdapat asosiasi antara jenis kelamin dengan minat ekstrakurikuler berdasarkan data tersebut!`,
+        points: 20,
+        keywords: ['tabel', 'kontingensi', 'persentase', 'asosiasi', 'kategorikal']
+      },
+      {
+        id: 2,
+        text: `<strong>Soal 2: Diagram Pencar dan Korelasi</strong><br><br>
+        Seorang guru ingin mengetahui hubungan antara waktu belajar (jam) dengan nilai ulangan matematika. Berikut data yang dikumpulkan dari 8 siswa:<br><br>
+        <table style="border-collapse: collapse; width: 100%; margin: 10px 0;">
+          <tr style="background: #f1f5f9;"><th style="border: 1px solid #cbd5e1; padding: 8px;">Siswa</th><th style="border: 1px solid #cbd5e1; padding: 8px;">A</th><th style="border: 1px solid #cbd5e1; padding: 8px;">B</th><th style="border: 1px solid #cbd5e1; padding: 8px;">C</th><th style="border: 1px solid #cbd5e1; padding: 8px;">D</th><th style="border: 1px solid #cbd5e1; padding: 8px;">E</th><th style="border: 1px solid #cbd5e1; padding: 8px;">F</th><th style="border: 1px solid #cbd5e1; padding: 8px;">G</th><th style="border: 1px solid #cbd5e1; padding: 8px;">H</th></tr>
+          <tr><td style="border: 1px solid #cbd5e1; padding: 8px;">Waktu (jam)</td><td style="border: 1px solid #cbd5e1; padding: 8px;">2</td><td style="border: 1px solid #cbd5e1; padding: 8px;">3</td><td style="border: 1px solid #cbd5e1; padding: 8px;">1</td><td style="border: 1px solid #cbd5e1; padding: 8px;">4</td><td style="border: 1px solid #cbd5e1; padding: 8px;">5</td><td style="border: 1px solid #cbd5e1; padding: 8px;">2</td><td style="border: 1px solid #cbd5e1; padding: 8px;">3</td><td style="border: 1px solid #cbd5e1; padding: 8px;">4</td></tr>
+          <tr><td style="border: 1px solid #cbd5e1; padding: 8px;">Nilai</td><td style="border: 1px solid #cbd5e1; padding: 8px;">65</td><td style="border: 1px solid #cbd5e1; padding: 8px;">75</td><td style="border: 1px solid #cbd5e1; padding: 8px;">55</td><td style="border: 1px solid #cbd5e1; padding: 8px;">85</td><td style="border: 1px solid #cbd5e1; padding: 8px;">90</td><td style="border: 1px solid #cbd5e1; padding: 8px;">70</td><td style="border: 1px solid #cbd5e1; padding: 8px;">80</td><td style="border: 1px solid #cbd5e1; padding: 8px;">88</td></tr>
+        </table><br>
+        <strong>Pertanyaan:</strong><br>
+        a) Gambarkan diagram pencar dari data di atas!<br>
+        b) Tentukan jenis korelasi (positif/negatif/tidak ada) berdasarkan diagram pencar!<br>
+        c) Prediksikan nilai siswa yang belajar selama 6 jam berdasarkan pola yang terlihat!`,
+        points: 20,
+        keywords: ['diagram pencar', 'korelasi', 'positif', 'numerik', 'prediksi']
+      },
+      {
+        id: 3,
+        text: `<strong>Soal 3: Analisis Frekuensi Relatif</strong><br><br>
+        Sebuah toko online mencatat hubungan antara kategori produk dengan metode pembayaran yang digunakan pelanggan selama satu bulan:<br><br>
+        <table style="border-collapse: collapse; width: 100%; margin: 10px 0;">
+          <tr style="background: #f1f5f9;"><th style="border: 1px solid #cbd5e1; padding: 8px;">Kategori</th><th style="border: 1px solid #cbd5e1; padding: 8px;">Transfer Bank</th><th style="border: 1px solid #cbd5e1; padding: 8px;">E-Wallet</th><th style="border: 1px solid #cbd5e1; padding: 8px;">COD</th></tr>
+          <tr><td style="border: 1px solid #cbd5e1; padding: 8px;">Elektronik</td><td style="border: 1px solid #cbd5e1; padding: 8px;">120</td><td style="border: 1px solid #cbd5e1; padding: 8px;">80</td><td style="border: 1px solid #cbd5e1; padding: 8px;">40</td></tr>
+          <tr><td style="border: 1px solid #cbd5e1; padding: 8px;">Fashion</td><td style="border: 1px solid #cbd5e1; padding: 8px;">60</td><td style="border: 1px solid #cbd5e1; padding: 8px;">150</td><td style="border: 1px solid #cbd5e1; padding: 8px;">90</td></tr>
+          <tr><td style="border: 1px solid #cbd5e1; padding: 8px;">Makanan</td><td style="border: 1px solid #cbd5e1; padding: 8px;">30</td><td style="border: 1px solid #cbd5e1; padding: 8px;">70</td><td style="border: 1px solid #cbd5e1; padding: 8px;">100</td></tr>
+        </table><br>
+        <strong>Pertanyaan:</strong><br>
+        a) Hitunglah frekuensi relatif (persentase) untuk setiap sel dalam tabel!<br>
+        b) Metode pembayaran apa yang paling populer untuk kategori Fashion?<br>
+        c) Berdasarkan data, jelaskan pola asosiasi antara kategori produk dengan metode pembayaran!`,
+        points: 20,
+        keywords: ['frekuensi relatif', 'persentase', 'kategorikal', 'pola', 'asosiasi']
+      },
+      {
+        id: 4,
+        text: `<strong>Soal 4: Koefisien Korelasi</strong><br><br>
+        Data tinggi badan (cm) dan berat badan (kg) dari 6 siswa kelas XI adalah sebagai berikut:<br><br>
+        <table style="border-collapse: collapse; width: 100%; margin: 10px 0;">
+          <tr style="background: #f1f5f9;"><th style="border: 1px solid #cbd5e1; padding: 8px;">Siswa</th><th style="border: 1px solid #cbd5e1; padding: 8px;">1</th><th style="border: 1px solid #cbd5e1; padding: 8px;">2</th><th style="border: 1px solid #cbd5e1; padding: 8px;">3</th><th style="border: 1px solid #cbd5e1; padding: 8px;">4</th><th style="border: 1px solid #cbd5e1; padding: 8px;">5</th><th style="border: 1px solid #cbd5e1; padding: 8px;">6</th></tr>
+          <tr><td style="border: 1px solid #cbd5e1; padding: 8px;">Tinggi (x)</td><td style="border: 1px solid #cbd5e1; padding: 8px;">155</td><td style="border: 1px solid #cbd5e1; padding: 8px;">160</td><td style="border: 1px solid #cbd5e1; padding: 8px;">165</td><td style="border: 1px solid #cbd5e1; padding: 8px;">170</td><td style="border: 1px solid #cbd5e1; padding: 8px;">175</td><td style="border: 1px solid #cbd5e1; padding: 8px;">180</td></tr>
+          <tr><td style="border: 1px solid #cbd5e1; padding: 8px;">Berat (y)</td><td style="border: 1px solid #cbd5e1; padding: 8px;">50</td><td style="border: 1px solid #cbd5e1; padding: 8px;">55</td><td style="border: 1px solid #cbd5e1; padding: 8px;">58</td><td style="border: 1px solid #cbd5e1; padding: 8px;">65</td><td style="border: 1px solid #cbd5e1; padding: 8px;">70</td><td style="border: 1px solid #cbd5e1; padding: 8px;">75</td></tr>
+        </table><br>
+        <strong>Pertanyaan:</strong><br>
+        a) Hitunglah rata-rata tinggi badan (x̄) dan rata-rata berat badan (ȳ)!<br>
+        b) Dengan menggunakan rumus korelasi Pearson, tentukan nilai koefisien korelasi (r)!<br>
+        c) Interpretasikan hasil koefisien korelasi tersebut dalam konteks hubungan tinggi dan berat badan!`,
+        points: 20,
+        keywords: ['koefisien korelasi', 'pearson', 'rata-rata', 'numerik', 'interpretasi']
+      },
+      {
+        id: 5,
+        text: `<strong>Soal 5: Analisis Data Kategorikal Ganda</strong><br><br>
+        Sebuah rumah sakit mencatat hubungan antara golongan darah dengan tekanan darah pasien:<br><br>
+        <table style="border-collapse: collapse; width: 100%; margin: 10px 0;">
+          <tr style="background: #f1f5f9;"><th style="border: 1px solid #cbd5e1; padding: 8px;">Golongan Darah</th><th style="border: 1px solid #cbd5e1; padding: 8px;">Rendah</th><th style="border: 1px solid #cbd5e1; padding: 8px;">Normal</th><th style="border: 1px solid #cbd5e1; padding: 8px;">Tinggi</th></tr>
+          <tr><td style="border: 1px solid #cbd5e1; padding: 8px;">A</td><td style="border: 1px solid #cbd5e1; padding: 8px;">15</td><td style="border: 1px solid #cbd5e1; padding: 8px;">45</td><td style="border: 1px solid #cbd5e1; padding: 8px;">20</td></tr>
+          <tr><td style="border: 1px solid #cbd5e1; padding: 8px;">B</td><td style="border: 1px solid #cbd5e1; padding: 8px;">10</td><td style="border: 1px solid #cbd5e1; padding: 8px;">35</td><td style="border: 1px solid #cbd5e1; padding: 8px;">25</td></tr>
+          <tr><td style="border: 1px solid #cbd5e1; padding: 8px;">AB</td><td style="border: 1px solid #cbd5e1; padding: 8px;">5</td><td style="border: 1px solid #cbd5e1; padding: 8px;">20</td><td style="border: 1px solid #cbd5e1; padding: 8px;">15</td></tr>
+          <tr><td style="border: 1px solid #cbd5e1; padding: 8px;">O</td><td style="border: 1px solid #cbd5e1; padding: 8px;">20</td><td style="border: 1px solid #cbd5e1; padding: 8px;">50</td><td style="border: 1px solid #cbd5e1; padding: 8px;">10</td></tr>
+        </table><br>
+        <strong>Pertanyaan:</strong><br>
+        a) Hitunglah total pasien untuk setiap golongan darah dan setiap kategori tekanan darah!<br>
+        b) Golongan darah mana yang memiliki proporsi tekanan darah tinggi paling besar?<br>
+        c) Berikan kesimpulan apakah terdapat asosiasi antara golongan darah dengan tekanan darah berdasarkan analisis data tersebut! Jelaskan alasan Anda!`,
+        points: 20,
+        keywords: ['proporsi', 'kategorikal', 'asosiasi', 'kesimpulan', 'analisis']
+      }
+    ];
+
+    // Application State
+    let currentStudent = '';
+    let currentQuestionIndex = 0;
+    let shuffledQuestions = [];
+    let answers = {};
+    let timerInterval = null;
+    let timeRemaining = 30 * 60; // 30 minutes in seconds
+    let startTime = null;
+    let examResults = [];
+
+    // Default config
+    const defaultConfig = {
+      exam_title: 'Latihan Soal Matematika',
+      instruction_text: 'Ujian terdiri dari 5 soal esai kontekstual tentang asosiasi variabel kategorikal dan numerik.',
+      background_color: '#1e3a5f',
+      surface_color: '#ffffff',
+      text_color: '#1e293b',
+      primary_action_color: '#2563eb',
+      secondary_action_color: '#64748b'
+    };
+
+    // DOM Elements
+    const loginScreen = document.getElementById('login-screen');
+    const instructionsScreen = document.getElementById('instructions-screen');
+    const examScreen = document.getElementById('exam-screen');
+    const resultScreen = document.getElementById('result-screen');
+    const confirmModal = document.getElementById('confirm-modal');
+
+    // Shuffle array using Fisher-Yates algorithm
+    function shuffleArray(array) {
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    // Format time display
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // Start timer
+    function startTimer() {
+      const timerDisplay = document.getElementById('timer-display');
+      const timerContainer = document.getElementById('timer');
+      
+      timerInterval = setInterval(() => {
+        timeRemaining--;
+        timerDisplay.textContent = formatTime(timeRemaining);
+        
+        if (timeRemaining <= 300) { // 5 minutes warning
+          timerContainer.classList.add('timer-warning');
+        }
+        
+        if (timeRemaining <= 0) {
+          clearInterval(timerInterval);
+          submitExam();
+        }
+      }, 1000);
+    }
+
+    // Stop timer
+    function stopTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    // Calculate time spent
+    function getTimeSpent() {
+      const totalTime = 30 * 60;
+      const spent = totalTime - timeRemaining;
+      return formatTime(spent);
+    }
+
+    // Display current question
+    function displayQuestion() {
+      const question = shuffledQuestions[currentQuestionIndex];
+      document.getElementById('question-number').textContent = `Soal ${currentQuestionIndex + 1} dari ${shuffledQuestions.length}`;
+      document.getElementById('question-text').innerHTML = question.text;
+      document.getElementById('question-points').textContent = `Poin: ${question.points}`;
+      document.getElementById('answer-input').value = answers[question.id] || '';
+      
+      // Update navigation buttons
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      const finishBtn = document.getElementById('finish-btn');
+      
+      prevBtn.disabled = currentQuestionIndex === 0;
+      prevBtn.style.opacity = currentQuestionIndex === 0 ? '0.5' : '1';
+      
+      if (currentQuestionIndex === shuffledQuestions.length - 1) {
+        nextBtn.classList.add('hidden');
+        finishBtn.classList.remove('hidden');
+      } else {
+        nextBtn.classList.remove('hidden');
+        finishBtn.classList.add('hidden');
+      }
+      
+      // Update dots
+      updateQuestionDots();
+    }
+
+    // Update question dots
+    function updateQuestionDots() {
+      const dotsContainer = document.getElementById('question-dots');
+      dotsContainer.innerHTML = '';
+      
+      shuffledQuestions.forEach((q, index) => {
+        const dot = document.createElement('button');
+        dot.className = `w-3 h-3 rounded-full transition-all ${
+          index === currentQuestionIndex 
+            ? 'bg-blue-600 scale-125' 
+            : answers[q.id] 
+              ? 'bg-green-500' 
+              : 'bg-slate-300'
+        }`;
+        dot.addEventListener('click', () => {
+          saveCurrentAnswer();
+          currentQuestionIndex = index;
+          displayQuestion();
+        });
+        dotsContainer.appendChild(dot);
+      });
+    }
+
+    // Save current answer
+    function saveCurrentAnswer() {
+      const question = shuffledQuestions[currentQuestionIndex];
+      const answer = document.getElementById('answer-input').value.trim();
+      if (answer) {
+        answers[question.id] = answer;
+      }
+    }
+
+    // Calculate score based on keywords
+    function calculateScore() {
+      let totalScore = 0;
+      
+      shuffledQuestions.forEach(question => {
+        const answer = (answers[question.id] || '').toLowerCase();
+        if (answer.length > 0) {
+          let keywordMatches = 0;
+          question.keywords.forEach(keyword => {
+            if (answer.includes(keyword.toLowerCase())) {
+              keywordMatches++;
+            }
+          });
+          
+          // Base score for attempting + bonus for keywords
+          const attemptScore = 10; // Base score for attempting
+          const keywordScore = Math.min(keywordMatches * 2, 10); // Max 10 points from keywords
+          totalScore += attemptScore + keywordScore;
+        }
+      });
+      
+      return Math.min(totalScore, 100);
+    }
+
+    // Submit exam
+    async function submitExam() {
+      stopTimer();
+      saveCurrentAnswer();
+      
+      const score = calculateScore();
+      const timeSpent = getTimeSpent();
+      const answeredCount = Object.keys(answers).length;
+      
+      // Show result screen
+      showScreen('result');
+      
+      document.getElementById('result-student-name').textContent = currentStudent;
+      document.getElementById('final-score').textContent = score;
+      document.getElementById('answered-count').textContent = `${answeredCount}/${shuffledQuestions.length}`;
+      document.getElementById('time-spent').textContent = timeSpent;
+      
+      // Update result icon based on score
+      const resultIcon = document.getElementById('result-icon');
+      if (score >= 80) {
+        resultIcon.innerHTML = '<svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+        resultIcon.className = 'w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4';
+      } else if (score >= 60) {
+        resultIcon.innerHTML = '<svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+        resultIcon.className = 'w-24 h-24 bg-amber-500 rounded-full flex items-center justify-center mx-auto mb-4';
+      } else {
+        resultIcon.innerHTML = '<svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+        resultIcon.className = 'w-24 h-24 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4';
+      }
+      
+      // Save to Canva Sheet
+      const saveStatus = document.getElementById('save-status');
+      
+      if (window.dataSdk) {
+        try {
+          const result = await window.dataSdk.create({
+            student_name: currentStudent,
+            score: score,
+            total_questions: shuffledQuestions.length,
+            correct_answers: answeredCount,
+            time_spent: timeSpent,
+            submitted_at: new Date().toISOString(),
+            answers: JSON.stringify(answers)
+          });
+          
+          if (result.isOk) {
+            saveStatus.innerHTML = '<span class="text-green-600 inline-flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Hasil tersimpan ke Canva Sheet</span>';
+          } else {
+            saveStatus.innerHTML = '<span class="text-red-500">Gagal menyimpan hasil</span>';
+          }
+        } catch (error) {
+          saveStatus.innerHTML = '<span class="text-red-500">Gagal menyimpan hasil</span>';
+        }
+      } else {
+        saveStatus.innerHTML = '<span class="text-slate-400">Mode demo - hasil tidak tersimpan</span>';
+      }
+    }
+
+    // Show screen
+    function showScreen(screen) {
+      loginScreen.classList.add('hidden');
+      instructionsScreen.classList.add('hidden');
+      examScreen.classList.add('hidden');
+      resultScreen.classList.add('hidden');
+      
+      switch(screen) {
+        case 'login':
+          loginScreen.classList.remove('hidden');
+          break;
+        case 'instructions':
+          instructionsScreen.classList.remove('hidden');
+          break;
+        case 'exam':
+          examScreen.classList.remove('hidden');
+          break;
+        case 'result':
+          resultScreen.classList.remove('hidden');
+          break;
+      }
+    }
+
+    // Reset exam
+    function resetExam() {
+      currentStudent = '';
+      currentQuestionIndex = 0;
+      shuffledQuestions = [];
+      answers = {};
+      timeRemaining = 30 * 60;
+      startTime = null;
+      stopTimer();
+      
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+      document.getElementById('login-error').classList.add('hidden');
+      document.getElementById('timer-display').textContent = '30:00';
+      document.getElementById('timer').classList.remove('timer-warning');
+      
+      showScreen('login');
+    }
+
+    // Event Listeners
+    document.getElementById('login-btn').addEventListener('click', () => {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('login-error');
+      
+      if (!username) {
+        errorDiv.textContent = 'Silakan masukkan nama Anda';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      
+      if (password !== '1234') {
+        errorDiv.textContent = 'Password salah. Gunakan password: 1234';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      
+      currentStudent = username;
+      document.getElementById('student-name-display').textContent = username;
+      showScreen('instructions');
+    });
+
+    document.getElementById('start-exam-btn').addEventListener('click', () => {
+      shuffledQuestions = shuffleArray(questionsBank);
+      startTime = new Date();
+      document.getElementById('exam-student-name').textContent = currentStudent;
+      showScreen('exam');
+      displayQuestion();
+      startTimer();
+    });
+
+    document.getElementById('prev-btn').addEventListener('click', () => {
+      if (currentQuestionIndex > 0) {
+        saveCurrentAnswer();
+        currentQuestionIndex--;
+        displayQuestion();
+      }
+    });
+
+    document.getElementById('next-btn').addEventListener('click', () => {
+      if (currentQuestionIndex < shuffledQuestions.length - 1) {
+        saveCurrentAnswer();
+        currentQuestionIndex++;
+        displayQuestion();
+      }
+    });
+
+    document.getElementById('finish-btn').addEventListener('click', () => {
+      saveCurrentAnswer();
+      const unanswered = shuffledQuestions.filter(q => !answers[q.id]).length;
+      const warningText = document.getElementById('unanswered-warning');
+      
+      if (unanswered > 0) {
+        warningText.textContent = `Perhatian: ${unanswered} soal belum dijawab!`;
+        warningText.classList.remove('hidden');
+      } else {
+        warningText.classList.add('hidden');
+      }
+      
+      confirmModal.classList.remove('hidden');
+    });
+
+    document.getElementById('cancel-submit').addEventListener('click', () => {
+      confirmModal.classList.add('hidden');
+    });
+
+    document.getElementById('confirm-submit').addEventListener('click', () => {
+      confirmModal.classList.add('hidden');
+      submitExam();
+    });
+
+    document.getElementById('retry-btn').addEventListener('click', resetExam);
+
+    // Allow Enter key for login
+    document.getElementById('password').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        document.getElementById('login-btn').click();
+      }
+    });
+
+    document.getElementById('username').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        document.getElementById('password').focus();
+      }
+    });
+
+    // Initialize SDKs
+    async function initApp() {
+      // Initialize Element SDK
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (config) => {
+            const examTitle = config.exam_title || defaultConfig.exam_title;
+            const instructionText = config.instruction_text || defaultConfig.instruction_text;
+            const bgColor = config.background_color || defaultConfig.background_color;
+            const surfaceColor = config.surface_color || defaultConfig.surface_color;
+            const textColor = config.text_color || defaultConfig.text_color;
+            const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+            
+            // Update title displays
+            const titleElements = document.querySelectorAll('h1');
+            if (titleElements[0]) titleElements[0].childNodes[0].textContent = examTitle;
+            
+            // Update instruction text
+            const instructionDisplay = document.getElementById('instruction-text-display');
+            if (instructionDisplay) instructionDisplay.textContent = instructionText;
+            
+            // Update colors
+            document.querySelectorAll('.gradient-bg').forEach(el => {
+              el.style.background = `linear-gradient(135deg, ${bgColor} 0%, ${bgColor}dd 50%, ${bgColor} 100%)`;
+            });
+            
+            document.querySelectorAll('.bg-blue-600').forEach(el => {
+              el.style.backgroundColor = primaryColor;
+            });
+          },
+          mapToCapabilities: (config) => ({
+            recolorables: [
+              {
+                get: () => config.background_color || defaultConfig.background_color,
+                set: (value) => window.elementSdk.setConfig({ background_color: value })
+              },
+              {
+                get: () => config.surface_color || defaultConfig.surface_color,
+                set: (value) => window.elementSdk.setConfig({ surface_color: value })
+              },
+              {
+                get: () => config.text_color || defaultConfig.text_color,
+                set: (value) => window.elementSdk.setConfig({ text_color: value })
+              },
+              {
+                get: () => config.primary_action_color || defaultConfig.primary_action_color,
+                set: (value) => window.elementSdk.setConfig({ primary_action_color: value })
+              },
+              {
+                get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+                set: (value) => window.elementSdk.setConfig({ secondary_action_color: value })
+              }
+            ],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (config) => new Map([
+            ['exam_title', config.exam_title || defaultConfig.exam_title],
+            ['instruction_text', config.instruction_text || defaultConfig.instruction_text]
+          ])
+        });
+      }
+
+      // Initialize Data SDK
+      if (window.dataSdk) {
+        const dataHandler = {
+          onDataChanged(data) {
+            examResults = data;
+            console.log('Exam results updated:', data.length, 'records');
+          }
+        };
+        
+        const result = await window.dataSdk.init(dataHandler);
+        if (!result.isOk) {
+          console.error('Failed to initialize Data SDK');
+        }
+      }
+    }
+
+    // Start the app
+    initApp();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9bd5b9ac9671f46d',t:'MTc2ODMxNjAyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
